@@ -31,19 +31,41 @@ def normalize_phone(phone):
 
     return result
 
+def merge_contacts(contacts):
+    """Merge duplicate contacts by last name and first name."""
+    unique_contacts = {}
+
+    for contact in contacts:
+        key = tuple(contact[:2])
+
+        if key not in unique_contacts:
+            unique_contacts[key] = contact.copy()
+        else:
+            existing = unique_contacts[key]
+
+            for index, value in enumerate(contact):
+                if not existing[index] and value:
+                    existing[index] = value
+
+    return list(unique_contacts.values())
+
 def main():
-    """Read contacts and normalize names and phones."""
+    """Read, normalize and merge phonebook contacts."""
     with open('phonebook_raw.csv', encoding='utf-8', newline='') as source:
         reader = csv.reader(source)
         header = next(reader)
         contacts = list(reader)
+
+    print(f'Исходное количество записей: {len(contacts)}')
 
     contacts = [normalize_name(contact) for contact in contacts]
 
     for contact in contacts:
         contact[5] = normalize_phone(contact[5])
 
-    print(f'Количество записей: {len(contacts)}')
+    contacts = merge_contacts(contacts)
+
+    print(f'Уникальных контактов: {len(contacts)}')
 
 
 if __name__ == '__main__':
