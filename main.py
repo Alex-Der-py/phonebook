@@ -50,7 +50,7 @@ def merge_contacts(contacts):
     return list(unique_contacts.values())
 
 def main():
-    """Read, normalize and merge phonebook contacts."""
+    """Normalize, merge and save phonebook contacts."""
     with open('phonebook_raw.csv', encoding='utf-8', newline='') as source:
         reader = csv.reader(source)
         header = next(reader)
@@ -65,7 +65,13 @@ def main():
 
     contacts = merge_contacts(contacts)
 
+    with open('phonebook.csv', 'w', encoding='utf-8', newline='') as target:
+        writer = csv.writer(target)
+        writer.writerow(header)
+        writer.writerows(contacts)
+
     print(f'Уникальных контактов: {len(contacts)}')
+    print('Результат сохранён в phonebook.csv')
 
 
 if __name__ == '__main__':
